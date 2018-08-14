@@ -1,0 +1,26 @@
+---
+- name: update all
+  apt:
+    update_cache: yes
+    upgrade: full
+
+- name: install packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - lsof
+    - emacs
+    - iptables
+    - elinks
+    - zsh
+    - moreutils
+    - ntfs-3g
+    - tshark
+    - tcpdump
+    - pv
+    - tmux
+- name: autoclean
+  apt:
+    autoremove: yes
+    autoclean: yes

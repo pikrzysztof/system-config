@@ -1,0 +1,29 @@
+---
+- name: update all
+  apt:
+    update_cache: yes
+    upgrade: full
+
+- name: install packages
+n  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - lsof
+    - emacs
+    - iptables
+    - elinks
+    - zsh
+    - moreutils
+    - ntfs-3g
+    - tshark
+    - tcpdump
+    - mtr
+    - pv
+    - tmux
+    - stalonetray # tray do xmonada
+    - transmission-cli # todo - ustawic iptables i wlaczyc serwis
+- name: autoclean
+  apt:
+    autoremove: yes
+    autoclean: yes

@@ -1,0 +1,16 @@
+---
+- name: Edit git config
+  template:
+    src: gitconfig.j2
+    dest: ~/.gitconfig
+
+
+- name: Chmod diff highlight
+  file:
+    dest: "{{ diff_highlight_path }}"
+    mode: a+x
+
+- name: Add gitignore
+  copy:
+    src: gitignore
+    dest: ~/.

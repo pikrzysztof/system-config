@@ -1,0 +1,14 @@
+---
+- order: sorted
+  hosts: localhost
+  become: yes
+  become_method: sudo
+  roles:
+    - flux
+#     - iptables
+     # - sshd
+     # - fail2ban
+     # - apt
+     # - git
+
+     # - hosts: rpi

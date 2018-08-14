@@ -1,0 +1,9 @@
+---
+- hosts: rpi
+  order: sorted
+  gather_facts: False
+  remote_user: pi
+  become: yes
+  become_method: sudo
+  roles:
+     - apt

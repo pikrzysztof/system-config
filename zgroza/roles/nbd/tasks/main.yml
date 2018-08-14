@@ -1,0 +1,21 @@
+---
+- name: install nbd
+  apt:
+    name: nbd-server
+    state: present
+
+- name: config nbd
+  copy:
+    src: network-drive.conf
+    dest: "{{ nbd_config_path }}"
+
+
+- name: add nbd user to groups
+  user:
+    append: yes
+    groups: disks
+    name: nbd
+
+### TODO: systemctl job zrobic
+### moze sync co minute?
+### najpierw trzeba przetestowac czy to dobrze dziala jak sie straci zasilanie czy cos?

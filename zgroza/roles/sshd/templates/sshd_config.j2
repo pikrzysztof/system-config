@@ -1,0 +1,18 @@
+Port				22
+AddressFamily		   	inet
+SyslogFacility			AUTH
+LogLevel			INFO
+PermitRootLogin			no
+MaxAuthTries			1
+PubkeyAuthentication		yes
+RSAAuthentication		yes
+AuthorizedKeysFile		.ssh/authorized_keys
+PasswordAuthentication		no
+PermitEmptyPasswords		no
+ChallengeResponseAuthentication no
+UsePAM 				yes
+X11Forwarding 			no
+PrintMotd 			no
+PrintLastLog 			yes
+AcceptEnv LANG LC_*
+Subsystem			sftp	/usr/lib/openssh/sftp-server

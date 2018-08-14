@@ -1,0 +1,20 @@
+# TODO - nie ma pacaur w ansiblu!---
+# - name: Install fluxd
+#   pacaur:
+#     name: xfluxd
+#     state: present
+
+- name: Conf fluxd
+  copy:
+    src: xfluxd.conf
+    dest: /etc/xfluxd.conf
+    mode: '644'
+    owner: root
+    
+- name: setup service
+  remote_user: krzysztof
+  service:
+    user: yes
+    name: xfluxd.service
+    enabled: yes
+    state: started

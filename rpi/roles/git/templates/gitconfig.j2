@@ -1,0 +1,18 @@
+[user]
+	name = Krzysztof Piecuch
+	email = piecuch@protonmail.com
+
+[push]
+	default = simple
+
+[merge]
+	tool = kdiff3 # todo - zamienic na pycharm
+
+[core]
+	excludesfile = ~/.gitignore
+
+[pager]
+	log = {{ diff_highlight_path }} | less
+	show = {{ diff_highlight_path }} | less
+	diff = {{ diff_highlight_path }} | less
+

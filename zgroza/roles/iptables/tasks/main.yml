@@ -1,0 +1,136 @@
+---
+- name: Open policies
+  iptables:
+    chain: INPUT
+    policy: ACCEPT
+    ip_version: "{{ item }}"    
+  async: 30
+  poll: 5
+  with_items:
+    - ipv4
+    - ipv6
+
+- name: Allow output
+  iptables:
+    chain: OUTPUT
+    policy: ACCEPT
+    ip_version: "{{ item }}"
+  with_items:
+    - ipv4
+    - ipv6
+
+- name: Allow forward
+  iptables:
+    chain: FORWARD
+    policy: ACCEPT
+    ip_version: "{{ item }}"    
+  with_items:
+    - ipv4
+    - ipv6
+
+- name: Flush
+  iptables:
+    flush: yes
+    ip_version: "{{ item }}"    
+  with_items:
+    - ipv4
+    - ipv6
+
+- name: allow established connections
+  iptables:
+    chain: INPUT
+    ctstate: "{{ item[0] }}"
+    jump: ACCEPT
+    ip_version: "{{ item[1] }}"
+  with_nested:
+    - ['ESTABLISHED', 'RELATED']
+    - ['ipv4', 'ipv6']
+  
+- name: allow in loopback
+  iptables:
+    chain: INPUT
+    in_interface: lo
+    jump: ACCEPT
+    ip_version: "{{ item }}"    
+  with_items:
+    - ipv4
+    - ipv6
+
+- name: allow out loopback
+  iptables:
+    chain: OUTPUT
+    out_interface: lo
+    jump: ACCEPT
+    ip_version: "{{ item }}"    
+  with_items:
+    - ipv4
+    - ipv6
+
+- name: allow ICMP
+  iptables:
+    chain: "{{ item[0] }}"
+    protocol: icmp
+    jump: ACCEPT
+    ip_version: "{{ item[1] }}"
+  with_nested:
+    - ['INPUT', 'OUTPUT', 'FORWARD']
+    - ['ipv4', 'ipv6']
+
+- name: limit incoming conenctions
+  iptables:
+    chain: INPUT
+    ctstate: NEW
+    protocol: tcp
+    destination_port: 22
+    limit: 3/minute
+    limit_burst: 500
+    jump: ACCEPT
+    ip_version: "{{ item }}"    
+  with_items:
+    - ipv4
+    - ipv6
+
+
+- name: drop incoming by default
+  iptables:
+    chain: INPUT
+    policy: DROP
+    ip_version: "{{ item }}"    
+  with_items:
+    - ipv4
+    - ipv6
+  async: 30
+  poll: 5
+
+- name: drop forward by default
+  iptables:
+    chain: FORWARD
+    policy: DROP
+    ip_version: "{{ item }}"    
+  with_items:
+    - ipv4
+    - ipv6    
+  async: 30
+  poll: 5
+
+- name: install persistent iptables
+  apt:
+    pkg: iptables-persistent
+    state: latest
+#    update_cache: true
+
+- name: Save tables
+  shell: iptables-save > /etc/iptables/rules.v4
+  
+- name: Save ipv6 tables
+  shell: ip6tables-save > /etc/iptables/rules.v6
+
+- name: persistent
+  service:
+    name: netfilter-persistent
+    state: started
+    enabled: yes
+   
+
+
+# iptables -A OUTPUT ! -o tun0 -m owner --uid-owner transmission -j REJECT --reject-with icmp-port-unreachable
