@@ -1,0 +1,38 @@
+---
+
+- name: Install openvpn (pacman)
+  pacman:
+    name: openvpn
+    state: latest
+    update_cache: yes
+  when:
+    ansible_pkg_mgr == "pacman"
+
+- name: Install openvpn (apt)
+  apt:
+    name: openvpn
+    state: latest
+    update_cache: yes
+  when:
+    ansible_pkg_mgr == "apt"
+
+- name: Put config files
+  copy:
+    src: "{{ item }}"
+    dest: /etc/openvpn/client/
+    owner: root
+    group: root
+    mode: 0400
+  with_items:
+    - ca.crt
+    - dh2048.pem
+    - oldshoe.crt
+    - oldshoe.key
+    - oldshoe.conf
+    - oldshoe.pass
+
+- name: Enable systemd service
+  systemd:
+    name: openvpn-client@oldshoe.service
+    enabled: yes
+    state: started

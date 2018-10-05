@@ -1,0 +1,7 @@
+---
+- gather_facts: True
+  become: yes
+  become_method: sudo
+  hosts: servers
+  roles:
+    - vpnsecure
