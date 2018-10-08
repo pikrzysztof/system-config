@@ -1,0 +1,34 @@
+---
+- name: Install wpa_supplicant
+  pacman:
+    name: ["wpa_supplicant", "dhcpcd"]
+    state: present
+    update_cache: no
+
+- name: Put config files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  with_items:
+    - { src: 'wpa_supplicant.conf', dest: '/etc/wpa_supplicant/wpa_supplicant.conf', mode: '0400' }
+    - { src: 'override.conf', dest: '/etc/systemd/system/wpa_supplicant.service.d', mode: '0644' }
+  register: wpa_conf
+
+- name: Enable services
+  systemd:
+    name: "{{ item }}.service"
+    enabled: yes
+    state: started
+    daemon_reload: yes
+  with_items:
+    - wpa_supplicant
+    - dhcpcd
+
+- name: restart_wpa
+  systemd:
+    name: wpa_supplicant.service
+    state: restarted
+  when: wpa_conf is changed
